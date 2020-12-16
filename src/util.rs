@@ -60,7 +60,7 @@ pub fn parse_cli() -> CliOpts {
                     }
                 }
             }
-            "--stop-on-bad-file" => abort_on_binary = true,
+            "--stop-on-bad-file" | "-s" => abort_on_binary = true,
             n => {
                 if n.starts_with("-") {
                     eprintln!("unexpected option: {}\n{}", n, HELP_TXT);

@@ -11,14 +11,13 @@ const MAX_HEIGHT_TEXT: usize = 48;
 
 const HELP_TXT: &'static str = "pdfcr version 1.0
 usage:
-pdfcr [files]... [directories]... [--stop-on-bad-file] [--title | -t TITLE] -o output-file.pdf
+pdfcr [files]... [directories]... [--stop-on-bad-file | -s] [--title | -t TITLE] -o output-file.pdf
 
 file: an optional list of files to render
 directories: an optional list of directories to render
 NOTE: at least one file or directory must be provided
 
---stop-on-bad-file: if pdfcr finds a file such as a binary file, it will not skip it (default),
-but stop and not render an output file
+--stop-on-bad-file | -s: if pdfcr finds a file such as a binary file, it will not skip it (default), but stop and not render an output file
 
 --title | -t: specify the title of the document, default is TITLE
 
