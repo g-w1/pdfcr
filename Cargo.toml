@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 printpdf = { git = "https://github.com/fschutt/printpdf", ref = "28446a6" }
 textwrap = "0.13.0"
+walkdir = "2"

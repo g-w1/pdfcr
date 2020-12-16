@@ -27,3 +27,6 @@ pub fn init_doc(title: &str, layer_name: &str) -> (PdfDocumentReference, Indirec
     doc.add_bookmark("TITLE", title_page);
     (doc, font)
 }
+pub fn exit() -> ! {
+    std::process::exit(1)
+}

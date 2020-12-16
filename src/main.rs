@@ -2,23 +2,57 @@ use printpdf::*;
 use std::fs::File;
 use std::io::BufWriter;
 use util::*;
+use walkdir::WalkDir;
 mod util;
 
 const WIDTH: f64 = 200.0;
 const HEIGHT: f64 = 264.0;
 const MAX_HEIGHT_TEXT: usize = 48;
 
-fn main() -> Result<(), Error> {
+fn main() {
     let (mut doc, font) = init_doc("TITLE", "CODE");
 
-    // let c = CodeFile::from_file("ir.cpp", font)?;
-    // //////////////////////////////////////////////////////////////////////////////// //////////////////////////////////////////////////////////////////////////////// //////////////////////////////////////////////////////////////////////////////// //////////////////////////////////////////////////////////////////////////////// ////////////////////////////////////////////////////////////////////////////////
-    let c = CodeFile::from_file("src/main.rs", font)?;
-    c.print_page(&mut doc);
+    for e in WalkDir::new("src") {
+        match e {
+            Ok(x) => {
+                if x.path().is_dir() {
+                    continue;
+                }
+                let path = x.path().to_str().unwrap();
+                let c = match CodeFile::from_file(path, font.clone()) {
+                    Ok(z) => z,
+                    Err(e) => {
+                        eprintln!("Could not render file '{}' because {}, skipping it", path, e);
+                        continue;
+                    }
+                };
+                c.print_page(&mut doc);
+                println!("Rendered: {}", path);
+                drop(c);
+            }
+            Err(e) => {
+                eprintln!("Could not render: {}", e);
+                exit();
+            }
+        }
+    }
 
-    doc.save(&mut BufWriter::new(File::create("code.pdf").unwrap()))
-        .unwrap();
-    Ok(())
+    let output = "code.pdf";
+    match doc.save(&mut BufWriter::new(match File::create(output) {
+        Ok(x) => x,
+        Err(e) => {
+            eprintln!("could not write file: {}", e);
+            exit();
+        }
+    })) {
+        Ok(_) => {
+            println!("Saved into: {}", output);
+        }
+        Err(e) => {
+            eprintln!("could not save doc: {}", e);
+            exit();
+        }
+    }
 }
 
 struct CodeFile {
@@ -32,8 +66,8 @@ impl CodeFile {
         let font_size = 11;
         let spacing = font_size as f64 / 2.1;
 
-        let (page,mut layer)  = add_new_page(doc, &self.name);
-        doc.add_bookmark("BRUH", page.page);
+        let (page, mut layer) = add_new_page(doc, &self.name);
+        doc.add_bookmark(self.name.clone(), page.page);
 
         let mut i = 0;
         let mut line_num_ctr = 0;
