@@ -23,7 +23,7 @@ pub fn init_doc(title: &str, layer_name: &str) -> (PdfDocumentReference, Indirec
         std::io::Cursor::new(include_bytes!("../assets/JetBrainsMono-Regular.ttf").as_ref());
     let font = doc.add_external_font(&mut font_reader).unwrap();
 
-    title_layer.use_text(title, 50.0, Mm(WIDTH / 2.0), Mm(HEIGHT / 2.0), &font);
+    title_layer.use_text(title, 50.0, Mm(0.0), Mm(HEIGHT / 2.0), &font);
     doc.add_bookmark("title page", title_page);
     (doc, font)
 }
