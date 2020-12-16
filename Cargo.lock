@@ -359,7 +359,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "pdfst"
+name = "pdfcr"
 version = "0.1.0"
 dependencies = [
  "printpdf",
@@ -380,9 +380,8 @@ dependencies = [
 
 [[package]]
 name = "printpdf"
-version = "0.3.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0d47ed5d1ebde73e4059e9c06493e0a068715e647649710d15b9c4188c47414"
+version = "0.3.4"
+source = "git+https://github.com/fschutt/printpdf#28446a613ee11f1e6e3d63af580ed9a49a659e06"
 dependencies = [
  "image",
  "js-sys",

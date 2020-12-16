@@ -32,7 +32,8 @@ impl CodeFile {
         let font_size = 11;
         let spacing = font_size as f64 / 2.1;
 
-        let mut layer = add_new_page(doc, &self.name).1;
+        let (page,mut layer)  = add_new_page(doc, &self.name);
+        doc.add_bookmark("BRUH", page.page);
 
         let mut i = 0;
         let mut line_num_ctr = 0;
@@ -56,7 +57,7 @@ impl CodeFile {
                 _line.push_str(bruh);
                 layer.use_text(
                     _line,
-                    font_size,
+                    font_size as f64,
                     Mm(2.0),
                     Mm(264.0 - spacing * i as f64 - spacing),
                     &self.font,
