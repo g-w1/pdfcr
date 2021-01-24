@@ -84,7 +84,7 @@ pub fn parse_cli() -> CliOpts {
 
     let title = match opt_t {
         Some(t) => t,
-        None => "TITLE".to_string()
+        None => "TITLE".to_string(),
     };
     CliOpts {
         inputs,

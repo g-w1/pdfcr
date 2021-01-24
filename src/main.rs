@@ -102,6 +102,7 @@ impl CodeFile {
         let spacing = font_size as f64 / 2.1;
 
         let (page, mut layer) = add_new_page(doc, &self.name);
+        self.put_fname_on_top(&mut layer, font_size);
         doc.add_bookmark(self.name.clone(), page.page);
 
         let mut i = 0;
@@ -110,6 +111,8 @@ impl CodeFile {
         for line in self.text.lines() {
             if i >= MAX_HEIGHT_TEXT {
                 layer = add_new_page(doc, &self.name).1;
+                self.put_fname_on_top(&mut layer, font_size);
+
                 i = 0;
             }
             let mut b = true;
@@ -142,5 +145,14 @@ impl CodeFile {
             name: fname.to_string(),
             font,
         })
+    }
+    pub fn put_fname_on_top(&self, layer: &mut PdfLayerReference, font_size: u32) {
+        layer.use_text(
+            self.name.clone(),
+            font_size as f64,
+            Mm(2.0),
+            Mm(259.0),
+            &self.font,
+        );
     }
 }
