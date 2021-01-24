@@ -42,7 +42,7 @@ fn main() {
                         continue;
                     }
                     let path = x.path().to_str().unwrap();
-                    let c = match CodeFile::from_file(path, font.clone()) {
+                    let mut c = match CodeFile::from_file(path, font.clone()) {
                         Ok(z) => z,
                         Err(e) => {
                             if !opts.abort_on_binary {
@@ -97,7 +97,9 @@ struct CodeFile {
 }
 
 impl CodeFile {
-    pub fn print_page(&self, doc: &mut PdfDocumentReference) {
+    pub fn print_page(&mut self, doc: &mut PdfDocumentReference) {
+        // we pick 4 spaces to go into a tab.
+        self.text = self.text.replace("\t", "    ");
         let font_size = 11;
         let spacing = font_size as f64 / 2.1;
 
