@@ -35,7 +35,7 @@ fn main() {
     let (mut doc, font) = init_doc(opts.title.as_str(), opts.title.as_str());
 
     for input in opts.inputs {
-        for e in WalkDir::new(input) {
+        for e in WalkDir::new(input).sort_by(|a,b| a.file_name().cmp(b.file_name())) {
             match e {
                 Ok(x) => {
                     if x.path().is_dir() {

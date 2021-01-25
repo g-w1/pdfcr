@@ -1,6 +1,6 @@
 [package]
 name = "pdfcr"
-version = "1.1.0"
+version = "1.2.0"
 authors = ["g-w1 <jacoblevgw@gmail.com>"]
 license-file = "LICENSE"
 homepage = "https://github.com/g-w1/pdfcr"
