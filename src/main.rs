@@ -21,6 +21,8 @@ NOTE: at least one file or directory must be provided
 
 --title | -t: specify the title of the document, default is TITLE
 
+--no-line-numbers | -n: do not include line numbers in the output
+
 -o: the output pdf file to render to, required
 
 examples:
@@ -34,15 +36,15 @@ fn main() {
     let opts = parse_cli();
     let (mut doc, font) = init_doc(opts.title.as_str(), opts.title.as_str());
 
-    for input in opts.inputs {
-        for e in WalkDir::new(input).sort_by(|a,b| a.file_name().cmp(b.file_name())) {
+    for input in &opts.inputs {
+        for e in WalkDir::new(input).sort_by(|a, b| a.file_name().cmp(b.file_name())) {
             match e {
                 Ok(x) => {
                     if x.path().is_dir() {
                         continue;
                     }
                     let path = x.path().to_str().unwrap();
-                    let mut c = match CodeFile::from_file(path, font.clone()) {
+                    let mut c = match CodeFile::from_file(path, &font, &opts) {
                         Ok(z) => z,
                         Err(e) => {
                             if !opts.abort_on_binary {
@@ -90,13 +92,14 @@ fn main() {
     }
 }
 
-struct CodeFile {
+struct CodeFile<'a> {
     text: String,
     name: String,
-    font: IndirectFontRef,
+    font: &'a IndirectFontRef,
+    opts: &'a CliOpts,
 }
 
-impl CodeFile {
+impl<'a> CodeFile<'a> {
     pub fn print_page(&mut self, doc: &mut PdfDocumentReference) {
         // we pick 4 spaces to go into a tab.
         self.text = self.text.replace("\t", "    ");
@@ -105,7 +108,7 @@ impl CodeFile {
 
         let (page, mut layer) = add_new_page(doc, &self.name);
         self.put_fname_on_top(&mut layer, font_size);
-        doc.add_bookmark(self.name.clone(), page.page);
+        doc.add_bookmark(&self.name, page.page);
 
         let mut i = 0;
         let mut line_num_ctr = 0;
@@ -118,17 +121,17 @@ impl CodeFile {
                 i = 0;
             }
             let mut b = true;
-            for bruh in textwrap::wrap(line, 85).iter() {
+            for wrapped_line in textwrap::wrap(line, 85).iter() {
                 i += 1;
                 let mut _line: String;
-                if b {
+                if b && self.opts.include_line_numbers {
                     _line = line_num_ctr.to_string();
                     _line.push(' ');
                     b = false;
                 } else {
                     _line = String::new();
                 }
-                _line.push_str(bruh);
+                _line.push_str(wrapped_line);
                 layer.use_text(
                     _line,
                     font_size as f64,
@@ -140,21 +143,16 @@ impl CodeFile {
             line_num_ctr += 1;
         }
     }
-    fn from_file(fname: &str, font: IndirectFontRef) -> Result<Self, Error> {
+    fn from_file(fname: &str, font: &'a IndirectFontRef, opts: &'a CliOpts) -> Result<Self, Error> {
         let text = std::fs::read_to_string(fname)?;
         Ok(Self {
             text,
             name: fname.to_string(),
             font,
+            opts,
         })
     }
     pub fn put_fname_on_top(&self, layer: &mut PdfLayerReference, font_size: u32) {
-        layer.use_text(
-            self.name.clone(),
-            font_size as f64,
-            Mm(2.0),
-            Mm(259.0),
-            &self.font,
-        );
+        layer.use_text(&self.name, font_size as f64, Mm(2.0), Mm(259.0), &self.font);
     }
 }

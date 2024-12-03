@@ -40,6 +40,7 @@ pub fn parse_cli() -> CliOpts {
     let mut abort_on_binary = false;
     let mut it = cmd_args_tmp.iter();
     let mut opt_t: Option<String> = None;
+    let mut include_line_numbers = true;
     while let Some(i) = it.next() {
         match i.as_str() {
             "-o" => {
@@ -61,6 +62,7 @@ pub fn parse_cli() -> CliOpts {
                 }
             }
             "--stop-on-bad-file" | "-s" => abort_on_binary = true,
+            "--no-line-numbers" | "-n" => include_line_numbers = false,
             n => {
                 if n.starts_with("-") {
                     eprintln!("unexpected option: {}\n{}", n, HELP_TXT);
@@ -91,6 +93,7 @@ pub fn parse_cli() -> CliOpts {
         output_file: output_file.unwrap(),
         title,
         abort_on_binary,
+        include_line_numbers,
     }
 }
 
@@ -99,4 +102,5 @@ pub struct CliOpts {
     pub output_file: String,
     pub title: String,
     pub abort_on_binary: bool,
+    pub include_line_numbers: bool,
 }
