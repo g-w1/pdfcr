@@ -1,5 +1,7 @@
 # pdfcr
 
+Install: `cargo install pdfcr`.
+
 # PDF CODE RENDERER:
 
 This is a utility to take a files and turn it into a pdf optimised for reading on a kindle (or anywhere) with bookmarks.
